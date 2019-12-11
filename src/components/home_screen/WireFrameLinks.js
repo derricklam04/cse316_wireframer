@@ -13,7 +13,7 @@ class WireFrameLinks extends React.Component {
                 {wireFrames && wireFrames.map(wireFrame => (
                     <Link to={'/wireFrame/' + wireFrame.id} key={wireFrame.id}>
                         <WireFrameCard 
-                            wireFrame={wireFrame} key = {wireFrame.key}
+                            wireFrame={wireFrame}
                         />
                     </Link>
                 ))}

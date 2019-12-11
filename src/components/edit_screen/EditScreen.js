@@ -47,24 +47,50 @@ class EditScreen extends Component {
 
         return (
             <div className='row'>
-                <div className="grey lighten-2 col m3">
+                <div className="controls grey lighten-2 col m3">
                     <div className='row'>
-                        <i className="material-icons col m2">zoom_in</i><i className="material-icons col m2">zoom_out</i>
-                        <div className='col m4'>save</div><div className='col m4'>close</div> 
+                        <i className="material-icons col m2">zoom_in</i>
+                        <i className="material-icons col m2">zoom_out</i>
+                        <div className='col m4'>save</div>
+                        <div className='col m4'>close</div> 
+                    </div> 
+                    <div className="divider black"></div>
+                    <div>
+                        <div className="Container section center-align">
+                            <div className="border container-prop"></div>
+                            <h6 className=""><b>Container</b></h6>
+                        </div>
+                        <div className="Label section center-align">
+                            <div className="prompt">Prompt for Input</div>
+                            <h6 className=""><b>Label</b></h6>
+                        </div>
+                        <div className="Button section center-align">
+                            <div className="button-prop grey lighten-1 border">Submit</div>
+                            <h6 className=""><b>Button</b></h6>
+                        </div>
+                        <div className="Textfield section center-align">
+                            <div className="textfield-prop white grey-text border ">input</div>
+                            <h6 className=""><b>Textfield</b></h6>
+                        </div>
                     </div>
                 </div>
+
+
                 <div className="white col m6 row">
                     <h5 className="grey-text text-darken-3 col m4">Wireframe:</h5>
                     <div className="input-field col m8">
                         <input className="active" type="text" name="name" id="name" onChange={this.handleChange} value={wireFrame.name} />
                     </div>
+                    <div className="canvas"></div>
                 </div>
-                <div className ="grey lighten-2 col m3">
-                    <h5>Properties</h5>
-                    <input className="white textbox" name="textbox" placeholder="Control Text"/>
 
-                    <div className="font-size row">
-                        <h7 className="col m5">Font size:</h7>
+
+                <div className ="properties grey lighten-2 col m3">
+                    <h5>Properties</h5>
+                    <input className="white textbox col s12" name="textbox" placeholder="Control Text"/>
+
+                    <div className="container font-size row">
+                        <h7 className="col m6">Font size:</h7>
                         <input className="white col m6" />
                     </div>
                     <div className="color">
@@ -75,14 +101,14 @@ class EditScreen extends Component {
                         <h7 className="border-color">Border Color:</h7>
                         <CompactPicker/>
                     </div>
-                    <div className="border-thickness row">
+                    <div className="container border-thickness row">
                         <p></p>
-                        <h7 className="col m5">Border Thickness:</h7>
+                        <h7 className="col m6">Border Thickness:</h7>
                         <input className="white col m6" />
                     </div>
-                    <div cßlassName="border-radius row">
-                        <h7 className="col m5">Border Radius:</h7>
-                        <input className="white col m6" />
+                    <div className="container border-radius row">
+                        <h7 className="col m6">Border Radius:</h7>
+                        <input className="white col m6"/>
                     </div>
                 </div>
             </div>

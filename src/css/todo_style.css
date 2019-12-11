@@ -20,7 +20,7 @@ body {
 
 div.banner {
   background-image: linear-gradient(to bottom,         
-  #b8b808, #636723);
+  #bdbdbd, #e65100);
   color: white;
   font-size: 48pt;
   border-color: black;
@@ -37,4 +37,40 @@ div.banner {
 }
 .home_new_list_button:hover {
   box-shadow: 1px 2px;
+}
+
+.border{
+  border: 1px solid #757575;
+}
+
+
+.section{
+  padding-top: 70px;
+}
+.canvas{
+  background-color: white;
+  margin-top: 70px;
+  border: 1px solid grey;
+  width: 100%;
+  height: 625px;
+}
+
+.container-prop{
+  background-color: white;
+  position: relative;
+  display: inline-block;
+  height: 75px;
+  width: 110px;
+}
+
+.button-prop{
+  height: 30px;
+  width:80px;
+  display: inline-block;
+}
+
+.textfield-prop{
+  height:25px;
+  width:125px;
+  display: inline-block;
 }
