@@ -5,10 +5,12 @@ import { compose } from 'redux';
 import { firestoreConnect } from 'react-redux-firebase';
 import { getFirestore } from 'redux-firestore';
 import {CompactPicker} from 'react-color';
+import ControlCard from './ControlCard';
 
 class EditScreen extends Component {
     state = {
         name: '',
+        controls: [],
     }
     changedTime = false;
 
@@ -21,25 +23,73 @@ class EditScreen extends Component {
 
     handleChange = (e) => {
         const { target } = e;
-
+        console.log(e)
         this.setState(state => ({
             ...state,
             [target.id]: target.value,
         }));
-
         const fireStore = getFirestore();
         let dbitem = fireStore.collection('wireFrames').doc(this.props.wireFrame.id);
         dbitem.update({ [target.id]: target.value });
     }
 
+    updateFireStore = (e) =>{
+        const fireStore = getFirestore();
+        let dbitem = fireStore.collection('wireFrames').doc(this.props.wireFrame.id);
+        dbitem.update({ controls: [...this.props.wireFrame.controls, e]});
+    }
+
+    addContainer = (e) => {
+        let container = {
+            controlType: 'container',
+            height: 50,
+            width: 100,
+            color: 'white',
+        }
+        this.setState({controls: [...this.state.controls, container]});
+        this.updateFireStore(container);
+    }
+    addPrompt = (e) => {
+        let prompt = {
+            controlType: 'prompt',
+            text: 'Prompt for Input'
+        }
+        this.setState({controls: [...this.state.controls, prompt]});
+        this.updateFireStore(prompt);
+    }
+    addButton = (e) => {
+        let button = {
+            controlType: 'button',
+            heigh: 20,
+            width: 40,
+            text: 'Submit'
+        }
+        this.setState({controls: [...this.state.controls, button]});
+        this.updateFireStore(button);
+
+    }
+    addTextfield = (e) => {
+        let textfield = {
+            controlType: 'textfield',
+            heigh: 20,
+            width: 60,
+            text: 'input'
+        }
+        this.setState({controls: [...this.state.controls, textfield]});
+        this.updateFireStore(textfield);
+
+    }
+
     render() {
         const auth = this.props.auth;
         const wireFrame = this.props.wireFrame;
+
         if (!auth.uid) {
             return <Redirect to="/" />;
         }
         if (!wireFrame)
         return <React.Fragment />
+
         if (!this.changedTime) {
             this.changedTime = true;
             this.updateTime();
@@ -47,7 +97,7 @@ class EditScreen extends Component {
 
         return (
             <div className='row'>
-                <div className="controls grey lighten-2 col m3">
+                <div className="controls grey lighten-2 col m2">
                     <div className='row'>
                         <i className="material-icons col m2">zoom_in</i>
                         <i className="material-icons col m2">zoom_out</i>
@@ -57,31 +107,35 @@ class EditScreen extends Component {
                     <div className="divider black"></div>
                     <div>
                         <div className="Container section center-align">
-                            <div className="border container-prop"></div>
+                            <a className="border container-prop active" name='controls'id="controls"onClick={this.addContainer}></a>
                             <h6 className=""><b>Container</b></h6>
                         </div>
                         <div className="Label section center-align">
-                            <div className="prompt">Prompt for Input</div>
+                            <div className="prompt " onClick={this.addPrompt}>Prompt for Input</div>
                             <h6 className=""><b>Label</b></h6>
                         </div>
                         <div className="Button section center-align">
-                            <div className="button-prop grey lighten-1 border">Submit</div>
+                            <div className="button-prop grey lighten-1 border" onClick={this.addButton}>Submit</div>
                             <h6 className=""><b>Button</b></h6>
                         </div>
                         <div className="Textfield section center-align">
-                            <div className="textfield-prop white grey-text border ">input</div>
+                            <div className="textfield-prop white grey-text border"onClick={this.addTextfield}>input</div>
                             <h6 className=""><b>Textfield</b></h6>
                         </div>
                     </div>
                 </div>
 
 
-                <div className="white col m6 row">
+                <div className="white col m7 row">
                     <h5 className="grey-text text-darken-3 col m4">Wireframe:</h5>
                     <div className="input-field col m8">
                         <input className="active" type="text" name="name" id="name" onChange={this.handleChange} value={wireFrame.name} />
                     </div>
-                    <div className="canvas"></div>
+                    <div className="canvas">
+                        <ControlCard
+                            controls = {wireFrame.controls}
+                        />
+                    </div>
                 </div>
 
 

@@ -6,8 +6,6 @@ import { firebaseConnect } from 'react-redux-firebase';
 import { logoutHandler } from '../../store/database/asynchHandler'
 
 class LoggedInLinks extends React.Component {
-
-  // As in SignIn.jsx we need to use a function that gets as an argument firebase object
   handleLogout = () => {
     const { firebase } = this.props;
     this.props.signOut(firebase);
@@ -17,7 +15,7 @@ class LoggedInLinks extends React.Component {
     const { profile } = this.props;
     return (
       <ul className="right">
-        <li><NavLink to="/" onClick={this.handleLogout}>Log Out</NavLink></li> {/* I left NavLink instead of anchor tag because I'm using airbnb eslint rules */}
+        <li><NavLink to="/" onClick={this.handleLogout}>Log Out</NavLink></li>
         <li><NavLink to="/" className="btn btn-floating orange darken-1">{profile.initials}</NavLink></li>
       </ul>
     );
