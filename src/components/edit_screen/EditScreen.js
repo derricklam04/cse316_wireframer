@@ -11,6 +11,7 @@ class EditScreen extends Component {
     state = {
         name: '',
         controls: [],
+        selectedControl: ''
     }
     changedTime = false;
 
@@ -77,7 +78,13 @@ class EditScreen extends Component {
         }
         this.setState({controls: [...this.state.controls, textfield]});
         this.updateFireStore(textfield);
-
+    }
+    select = (id) => {
+        this.setState({selectedControl: id})
+    }
+    unselect = (e)=>{
+        //e.stopPropagation();
+        //this.setState({selectedControl: 'a'})
     }
 
     render() {
@@ -131,9 +138,10 @@ class EditScreen extends Component {
                     <div className="input-field col m8">
                         <input className="active" type="text" name="name" id="name" onChange={this.handleChange} value={wireFrame.name} />
                     </div>
-                    <div className="canvas">
+                    <div className="canvas" onClick={this.unselect}>
                         <ControlCard
                             controls = {wireFrame.controls}
+                            select={this.select}
                         />
                     </div>
                 </div>
