@@ -142,6 +142,15 @@ class EditScreen extends Component {
         this.state.selectedControl.border_color = color.hex;
         this.updateFireStoreProperties();
     }
+    changeThickness = (e) => {
+        this.state.selectedControl.border_thickness = Number(e.target.value);
+        this.updateFireStoreProperties();
+    }
+    changeRadius = (e) => {
+        this.state.selectedControl.border_radius = Number(e.target.value);
+        this.updateFireStoreProperties();
+    }
+
 
     updateFireStoreProperties = () =>{
         let controls = JSON.parse(JSON.stringify(this.props.wireFrame.controls));
@@ -235,11 +244,11 @@ class EditScreen extends Component {
                     <div className="container border-thickness row">
                         <p></p>
                         <h6 className="col m6">Border Thickness:</h6>
-                        <input className="white col m6" />
+                        <input className="white col m6" type="number" onChange={this.changeThickness} value={selectedControl.border_thickness}/>
                     </div>
                     <div className="container border-radius row">
                         <h6 className="col m6">Border Radius:</h6>
-                        <input className="white col m6"/>
+                        <input className="white col m6" type="number" onChange={this.changeRadius} value={selectedControl.border_radius}/>
                     </div>
                 </div>
             </div>
