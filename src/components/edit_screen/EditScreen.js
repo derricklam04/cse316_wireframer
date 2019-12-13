@@ -66,7 +66,7 @@ class EditScreen extends Component {
             x: 0,
             y: 0,
             text: 'Prompt for Input',
-            text_size: 12,
+            text_size: 16,
             background: '',
             text_color: 'black',
             border_color: '',
@@ -84,8 +84,8 @@ class EditScreen extends Component {
             x: 0,
             y: 0,
             text: 'Submit',
-            text_size: 12,
-            background: 'grey',
+            text_size: 16,
+            background: '#CCCCCC',
             text_color: 'black',
             border_color: 'black',
             border_thickness: 1,
@@ -103,7 +103,7 @@ class EditScreen extends Component {
             x: 0,
             y: 0,
             text: 'input',
-            text_size: 12,
+            text_size: 16,
             background: 'white',
             text_color: 'black',
             border_color: 'black',
@@ -123,17 +123,33 @@ class EditScreen extends Component {
 
     changeInput = (e) =>{
         this.state.selectedControl.text = e.target.value;
-        console.log(this.state.selectedControl.text);
+        this.updateFireStoreProperties();
+        
+    }
+    changeTextSize = (e) =>{
+        this.state.selectedControl.text_size = Number(e.target.value);
+        this.updateFireStoreProperties();
+    }
+    changeBackground = (color, e) => {
+        this.state.selectedControl.background = color.hex;
+        this.updateFireStoreProperties();
+    }
+    changeTextColor = (color, e) => {
+        this.state.selectedControl.text_color = color.hex;
+        this.updateFireStoreProperties();
+    }
+    changeBorderColor = (color, e) => {
+        this.state.selectedControl.border_color = color.hex;
+        this.updateFireStoreProperties();
+    }
 
-        console.log("ON SUBMIT");
+    updateFireStoreProperties = () =>{
         let controls = JSON.parse(JSON.stringify(this.props.wireFrame.controls));
         let pos = this.state.selectedControl.id;
         controls[pos] = this.state.selectedControl;
         console.log(controls);
         let fireStore = getFirestore();
         fireStore.collection("wireFrames").doc(this.props.wireFrame.id).update({ controls: controls });
-        //this.goBack();
-
     }
 
 
@@ -200,28 +216,29 @@ class EditScreen extends Component {
 
                 <div className ="properties grey lighten-2 col m3">
                     <h5>Properties</h5>
-                    <input className="active white textbox col s12" type="text" name="textbox" placeholder="Control Text"
+                    <input className="active white textbox col s12" type="text" name="text" placeholder="Control Text"
                          onChange={this.changeInput} value={selectedControl.text}/>
 
                     <div className="container font-size row">
-                        <h7 className="col m6">Font size:</h7>
-                        <input className="white col m6" type='number' value={selectedControl.text_size}/>
+                        <h6 className="col m6">Font size:</h6>
+                        <input className="white col m6" type='number' value={selectedControl.text_size}
+                            onChange={this.changeTextSize}/>
                     </div>
                     <div className="color">
-                        <h7 className="background-color">Background:</h7>
-                        <CompactPicker/>
-                        <h7 className="text-color">Text Color:</h7>
-                        <CompactPicker/>
-                        <h7 className="border-color">Border Color:</h7>
-                        <CompactPicker/>
+                        <h6 className="background-color">Background:</h6>
+                        <CompactPicker color={selectedControl.background} onChange={this.changeBackground}/>
+                        <h6 className="text-color">Text Color:</h6>
+                        <CompactPicker color={selectedControl.text_color} onChange={this.changeTextColor}/>
+                        <h6 className="border-color">Border Color:</h6>
+                        <CompactPicker color={selectedControl.border_color} onChange={this.changeBorderColor}/>
                     </div>
                     <div className="container border-thickness row">
                         <p></p>
-                        <h7 className="col m6">Border Thickness:</h7>
+                        <h6 className="col m6">Border Thickness:</h6>
                         <input className="white col m6" />
                     </div>
                     <div className="container border-radius row">
-                        <h7 className="col m6">Border Radius:</h7>
+                        <h6 className="col m6">Border Radius:</h6>
                         <input className="white col m6"/>
                     </div>
                 </div>
