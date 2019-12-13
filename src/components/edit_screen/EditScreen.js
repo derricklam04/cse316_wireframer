@@ -45,7 +45,15 @@ class EditScreen extends Component {
             controlType: 'container',
             height: 50,
             width: 100,
-            color: 'white',
+            x: 0,
+            y: 0,
+            text: '',
+            text_size: 0,
+            background: 'white',
+            text_color: '',
+            border_color: 'black',
+            border_thickness: 1,
+            border_radius: 1,
         }
         this.setState({controls: [...this.state.controls, container]});
         this.updateFireStore(container);
@@ -53,7 +61,17 @@ class EditScreen extends Component {
     addPrompt = (e) => {
         let prompt = {
             controlType: 'prompt',
-            text: 'Prompt for Input'
+            height: 20,
+            width: 40,
+            x: 0,
+            y: 0,
+            text: 'Prompt for Input',
+            text_size: 12,
+            background: '',
+            text_color: 'black',
+            border_color: '',
+            border_thickness: 0,
+            border_radius: 0,
         }
         this.setState({controls: [...this.state.controls, prompt]});
         this.updateFireStore(prompt);
@@ -61,9 +79,17 @@ class EditScreen extends Component {
     addButton = (e) => {
         let button = {
             controlType: 'button',
-            heigh: 20,
+            height: 20,
             width: 40,
-            text: 'Submit'
+            x: 0,
+            y: 0,
+            text: 'Submit',
+            text_size: 12,
+            background: 'grey',
+            text_color: 'black',
+            border_color: 'black',
+            border_thickness: 1,
+            border_radius: 1,
         }
         this.setState({controls: [...this.state.controls, button]});
         this.updateFireStore(button);
@@ -72,24 +98,49 @@ class EditScreen extends Component {
     addTextfield = (e) => {
         let textfield = {
             controlType: 'textfield',
-            heigh: 20,
+            height: 20,
             width: 60,
-            text: 'input'
+            x: 0,
+            y: 0,
+            text: 'input',
+            text_size: 12,
+            background: 'white',
+            text_color: 'black',
+            border_color: 'black',
+            border_thickness: 1,
+            border_radius: 1,
         }
         this.setState({controls: [...this.state.controls, textfield]});
         this.updateFireStore(textfield);
     }
-    select = (id) => {
-        this.setState({selectedControl: id})
+    select = (control) => {
+        this.setState({selectedControl: control})
     }
     unselect = (e)=>{
         //e.stopPropagation();
         //this.setState({selectedControl: 'a'})
     }
 
+    changeInput = (e) =>{
+        this.state.selectedControl.text = e.target.value;
+        console.log(this.state.selectedControl.text);
+
+        console.log("ON SUBMIT");
+        let controls = JSON.parse(JSON.stringify(this.props.wireFrame.controls));
+        let pos = this.state.selectedControl.id;
+        controls[pos] = this.state.selectedControl;
+        console.log(controls);
+        let fireStore = getFirestore();
+        fireStore.collection("wireFrames").doc(this.props.wireFrame.id).update({ controls: controls });
+        //this.goBack();
+
+    }
+
+
     render() {
         const auth = this.props.auth;
         const wireFrame = this.props.wireFrame;
+        const selectedControl = this.state.selectedControl;
 
         if (!auth.uid) {
             return <Redirect to="/" />;
@@ -149,11 +200,12 @@ class EditScreen extends Component {
 
                 <div className ="properties grey lighten-2 col m3">
                     <h5>Properties</h5>
-                    <input className="white textbox col s12" name="textbox" placeholder="Control Text"/>
+                    <input className="active white textbox col s12" type="text" name="textbox" placeholder="Control Text"
+                         onChange={this.changeInput} value={selectedControl.text}/>
 
                     <div className="container font-size row">
                         <h7 className="col m6">Font size:</h7>
-                        <input className="white col m6" />
+                        <input className="white col m6" type='number' value={selectedControl.text_size}/>
                     </div>
                     <div className="color">
                         <h7 className="background-color">Background:</h7>
