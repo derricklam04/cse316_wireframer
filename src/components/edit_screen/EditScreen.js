@@ -15,11 +15,25 @@ class EditScreen extends Component {
         super(props);
         //this.handleDeleteControl = this.handleDeleteControl.bind(this);
     }
+    
 
     state = {
         name: '',
         controls: [],
-        selectedControl: '',
+        selectedControl:{
+            controlType: 'unselected',
+            height: 0,
+            width: 0,
+            x: 0,
+            y: 0,
+            text: '',
+            text_size: 0,
+            background: '',
+            text_color: '',
+            border_color: '',
+            border_thickness: 0,
+            border_radius: 0,
+        },
         saved: false,
     }
     changedTime = false;
@@ -122,58 +136,84 @@ class EditScreen extends Component {
         this.setState({controls: [...this.state.controls, textfield]});
         //this.updateFireStore(textfield);
     }
-    select = (control) => {
+    select = (control, e) => {
+        e.stopPropagation()
         this.setState({selectedControl: control})
-        
-
     }
     unselect = (e)=>{
-        //e.stopPropagation();
-        //this.setState({selectedControl: 'a'})
+        const unselectControl ={
+            controlType: 'unselected',
+            height: 0,
+            width: 0,
+            x: 0,
+            y: 0,
+            text: '',
+            text_size: 0,
+            background: '',
+            text_color: '',
+            border_color: '',
+            border_thickness: 0,
+            border_radius: 0,
+        }
+        this.setState({selectedControl: unselectControl})
     }
 
     changeInput = (e) =>{
-        const id = this.state.selectedControl.id;
-        const tempControl = this.state.controls.slice();
-        tempControl[id].text = e.target.value;
-        this.setState({controls: tempControl});
-
+        if (this.state.selectedControl.controlType !== 'unselected'){
+            const id = this.state.selectedControl.id;
+            const tempControl = this.state.controls.slice();
+            tempControl[id].text = e.target.value;
+            this.setState({controls: tempControl});
+        }
+        
     }
     changeTextSize = (e) =>{
-        const id = this.state.selectedControl.id;
-        const tempControl = this.state.controls.slice();
-        tempControl[id].text_size = Number(e.target.value);
-        this.setState({controls: tempControl});
+        if (this.state.selectedControl.controlType !== 'unselected'){
+            const id = this.state.selectedControl.id;
+            const tempControl = this.state.controls.slice();
+            tempControl[id].text_size = Number(e.target.value);
+            this.setState({controls: tempControl});
+        }
     }
     changeBackground = (color, e) => {
-        const id = this.state.selectedControl.id;
-        const tempControl = this.state.controls.slice();
-        tempControl[id].background = color.hex;
-        this.setState({controls: tempControl});
+        if (this.state.selectedControl.controlType !== 'unselected'){
+            const id = this.state.selectedControl.id;
+            const tempControl = this.state.controls.slice();
+            tempControl[id].background = color.hex;
+            this.setState({controls: tempControl});
+        }
     }
     changeTextColor = (color, e) => {
-        const id = this.state.selectedControl.id;
-        const tempControl = this.state.controls.slice();
-        tempControl[id].text_color = color.hex;
-        this.setState({controls: tempControl});
+        if (this.state.selectedControl.controlType !== 'unselected'){
+            const id = this.state.selectedControl.id;
+            const tempControl = this.state.controls.slice();
+            tempControl[id].text_color = color.hex;
+            this.setState({controls: tempControl});
+        }
     }
     changeBorderColor = (color, e) => {
-        const id = this.state.selectedControl.id;
-        const tempControl = this.state.controls.slice();
-        tempControl[id].border_color = color.hex;
-        this.setState({controls: tempControl});
+        if (this.state.selectedControl.controlType !== 'unselected'){
+            const id = this.state.selectedControl.id;
+            const tempControl = this.state.controls.slice();
+            tempControl[id].border_color = color.hex;
+            this.setState({controls: tempControl});
+        }
     }
     changeThickness = (e) => {
-        const id = this.state.selectedControl.id;
-        const tempControl = this.state.controls.slice();
-        tempControl[id].border_thickness = Number(e.target.value);
-        this.setState({controls: tempControl});
+        if (this.state.selectedControl.controlType !== 'unselected'){
+            const id = this.state.selectedControl.id;
+            const tempControl = this.state.controls.slice();
+            tempControl[id].border_thickness = Number(e.target.value);
+            this.setState({controls: tempControl});
+        }
     }
     changeRadius = (e) => {
-        const id = this.state.selectedControl.id;
-        const tempControl = this.state.controls.slice();
-        tempControl[id].border_radius = Number(e.target.value);
-        this.setState({controls: tempControl});
+        if (this.state.selectedControl.controlType !== 'unselected'){
+            const id = this.state.selectedControl.id;
+            const tempControl = this.state.controls.slice();
+            tempControl[id].border_radius = Number(e.target.value);
+            this.setState({controls: tempControl});
+        }
     }
 
 
@@ -185,14 +225,39 @@ class EditScreen extends Component {
         let fireStore = getFirestore();
         fireStore.collection("wireFrames").doc(this.props.wireFrame.id).update({ controls: controls });
     }
-    
-    handleDeleteControl (event){
-        event.preventDefault();
-        event.stopPropagation();
-        if (event.keyCode === 27 || event.keyCode === 8){
+    componentDidMount(){
+        document.addEventListener("keydown", this.handleDeleteControl, false);
+      }
+      componentWillUnmount(){
+        document.removeEventListener("keydown", this.handleDeleteControl, false);
+      }
+    handleDeleteControl = (event) => {
+        var pressed = false;
+        if (event.keyCode === 27 || event.keyCode === 8 ){
+            event.preventDefault();
+            event.stopPropagation();
             console.log('You pressed Delete')
+            pressed = true;
+        }
+        if (pressed){
+            const unselected={
+                    controlType: 'unselected',
+                    height: 0,
+                    width: 0,
+                    x: 0,
+                    y: 0,
+                    text: '',
+                    text_size: 0,
+                    background: '',
+                    text_color: '',
+                    border_color: '',
+                    border_thickness: 0,
+                    border_radius: 0,
+                
+            }
             var id = this.state.selectedControl.id;
             this.setState({controls: this.state.controls.filter((_,i)=>i!=id)})
+            this.setState({selectedControl: unselected})
         }
     }
 
@@ -256,7 +321,7 @@ class EditScreen extends Component {
                         <i className="material-icons col m2">zoom_out</i>
                         <div className='col m4 waves-effect waves-light grey lighten-3 accent-2 hoverable rounded modal-trigger' 
                             href="#modal3" onClick={this.saveWireframe}>save</div>
-                        <Modal id="modal3" header="Wireframe SAVED" actions={
+                        <Modal id="modal3" header="Wireframe [SAVED]" actions={
                             <div className="green  lighten-2">
                                 <Button className="grey darken-1" modal="close">Close</Button>
                             </div>}>

@@ -5,23 +5,17 @@ import { connect } from 'react-redux';
 import { compose } from 'redux';
 
 class WireFrameCard extends React.Component {
-    state= {
-        currentWireFrame: this.props.wireFrame,
-    }
 
-    deleteWireFrame = (e) => {
+
+    deleteWireFrame = (id, e) => {
+        console.log(id)
         e.stopPropagation();
-        e.preventDefault();
-
-        this.setState({currentWireFrame: this.props.wireFrame});
-
         let fireStore = getFirestore();
-        fireStore.collection('wireFrames').doc(this.state.currentWireFrame.id).delete().then(function () {
+        fireStore.collection('wireFrames').doc(id).delete().then(function () {
             console.log("Document successfully deleted!");
         }).catch(function (error) {
             console.error("Error removing document: ", error);
         });
-        //this.props.history.goBack();
     }
     doNothing = (e) => {
         e.stopPropagation();
@@ -29,7 +23,6 @@ class WireFrameCard extends React.Component {
     
     render() {
         const { wireFrame } = this.props;
-        const handleClick = this.deleteWireFrame;
         console.log("WireFrameCard, wireFrame.id: " + wireFrame.id);
         return (
             <div className="card z-depth-0 todo-list-link">
@@ -43,7 +36,7 @@ class WireFrameCard extends React.Component {
                     <Modal id="modal1" header="Delete Wireframe?" actions={
                         <div className="orange lighten-2">
                             <Button className="red" tooltip="The list will not be retrievable." tooltipOptions={{ position: 'left' }}
-                                onClick={handleClick} modal="close">Yes</Button><span>  </span>
+                                onClick={this.deleteWireFrame.bind(this, wireFrame.index)} modal="close">Yes</Button><span>  </span>
                             <Button onClick={this.doNothing} className="grey darken-1" modal="close">No</Button>
                         </div>}>
                         <p><b>Are you sure you want to delete this wireframe?</b></p>
