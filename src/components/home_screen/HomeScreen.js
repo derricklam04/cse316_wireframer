@@ -33,10 +33,8 @@ class HomeScreen extends Component {
             <div className="dashboard container">
                 <div className="row">
                     <div className="col s12 m4">
-                        <WireFrameLinks 
-                        />
+                        <WireFrameLinks />
                     </div>
-
                     <div className="col s8">
                         <div className="banner">
                             WireFrame<br />

@@ -16,7 +16,7 @@ class LoggedInLinks extends React.Component {
     return (
       <ul className="right">
         <li><NavLink to="/" onClick={this.handleLogout}>Log Out</NavLink></li>
-        <li><NavLink to="/" className="btn btn-floating orange darken-1">{profile.initials}</NavLink></li>
+        <li><NavLink to="/" className="orange darken-1 btn btn-floating">{profile.initials}</NavLink></li>
       </ul>
     );
   };

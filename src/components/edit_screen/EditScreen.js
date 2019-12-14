@@ -6,12 +6,21 @@ import { firestoreConnect } from 'react-redux-firebase';
 import { getFirestore } from 'redux-firestore';
 import {CompactPicker} from 'react-color';
 import ControlCard from './ControlCard';
+import { Link } from 'react-router-dom';
+import { Modal, Button } from 'react-materialize';
+
 
 class EditScreen extends Component {
+    constructor(props){
+        super(props);
+        //this.handleDeleteControl = this.handleDeleteControl.bind(this);
+    }
+
     state = {
         name: '',
         controls: [],
-        selectedControl: ''
+        selectedControl: '',
+        saved: false,
     }
     changedTime = false;
 
@@ -43,7 +52,7 @@ class EditScreen extends Component {
     addContainer = (e) => {
         let container = {
             controlType: 'container',
-            height: 50,
+            height: 80,
             width: 100,
             x: 0,
             y: 0,
@@ -56,13 +65,13 @@ class EditScreen extends Component {
             border_radius: 1,
         }
         this.setState({controls: [...this.state.controls, container]});
-        this.updateFireStore(container);
+        //this.updateFireStore(container);
     }
     addPrompt = (e) => {
         let prompt = {
             controlType: 'prompt',
-            height: 20,
-            width: 40,
+            height: 30,
+            width: 120,
             x: 0,
             y: 0,
             text: 'Prompt for Input',
@@ -74,13 +83,13 @@ class EditScreen extends Component {
             border_radius: 0,
         }
         this.setState({controls: [...this.state.controls, prompt]});
-        this.updateFireStore(prompt);
+        //this.updateFireStore(prompt);
     }
     addButton = (e) => {
         let button = {
             controlType: 'button',
-            height: 20,
-            width: 40,
+            height: 30,
+            width: 60,
             x: 0,
             y: 0,
             text: 'Submit',
@@ -92,14 +101,14 @@ class EditScreen extends Component {
             border_radius: 1,
         }
         this.setState({controls: [...this.state.controls, button]});
-        this.updateFireStore(button);
+        //this.updateFireStore(button);
 
     }
     addTextfield = (e) => {
         let textfield = {
             controlType: 'textfield',
-            height: 20,
-            width: 60,
+            height: 25,
+            width: 100,
             x: 0,
             y: 0,
             text: 'input',
@@ -111,10 +120,12 @@ class EditScreen extends Component {
             border_radius: 1,
         }
         this.setState({controls: [...this.state.controls, textfield]});
-        this.updateFireStore(textfield);
+        //this.updateFireStore(textfield);
     }
     select = (control) => {
         this.setState({selectedControl: control})
+        
+
     }
     unselect = (e)=>{
         //e.stopPropagation();
@@ -122,33 +133,47 @@ class EditScreen extends Component {
     }
 
     changeInput = (e) =>{
-        this.state.selectedControl.text = e.target.value;
-        this.updateFireStoreProperties();
-        
+        const id = this.state.selectedControl.id;
+        const tempControl = this.state.controls.slice();
+        tempControl[id].text = e.target.value;
+        this.setState({controls: tempControl});
+
     }
     changeTextSize = (e) =>{
-        this.state.selectedControl.text_size = Number(e.target.value);
-        this.updateFireStoreProperties();
+        const id = this.state.selectedControl.id;
+        const tempControl = this.state.controls.slice();
+        tempControl[id].text_size = Number(e.target.value);
+        this.setState({controls: tempControl});
     }
     changeBackground = (color, e) => {
-        this.state.selectedControl.background = color.hex;
-        this.updateFireStoreProperties();
+        const id = this.state.selectedControl.id;
+        const tempControl = this.state.controls.slice();
+        tempControl[id].background = color.hex;
+        this.setState({controls: tempControl});
     }
     changeTextColor = (color, e) => {
-        this.state.selectedControl.text_color = color.hex;
-        this.updateFireStoreProperties();
+        const id = this.state.selectedControl.id;
+        const tempControl = this.state.controls.slice();
+        tempControl[id].text_color = color.hex;
+        this.setState({controls: tempControl});
     }
     changeBorderColor = (color, e) => {
-        this.state.selectedControl.border_color = color.hex;
-        this.updateFireStoreProperties();
+        const id = this.state.selectedControl.id;
+        const tempControl = this.state.controls.slice();
+        tempControl[id].border_color = color.hex;
+        this.setState({controls: tempControl});
     }
     changeThickness = (e) => {
-        this.state.selectedControl.border_thickness = Number(e.target.value);
-        this.updateFireStoreProperties();
+        const id = this.state.selectedControl.id;
+        const tempControl = this.state.controls.slice();
+        tempControl[id].border_thickness = Number(e.target.value);
+        this.setState({controls: tempControl});
     }
     changeRadius = (e) => {
-        this.state.selectedControl.border_radius = Number(e.target.value);
-        this.updateFireStoreProperties();
+        const id = this.state.selectedControl.id;
+        const tempControl = this.state.controls.slice();
+        tempControl[id].border_radius = Number(e.target.value);
+        this.setState({controls: tempControl});
     }
 
 
@@ -160,12 +185,55 @@ class EditScreen extends Component {
         let fireStore = getFirestore();
         fireStore.collection("wireFrames").doc(this.props.wireFrame.id).update({ controls: controls });
     }
+    
+    handleDeleteControl (event){
+        event.preventDefault();
+        event.stopPropagation();
+        if (event.keyCode === 27 || event.keyCode === 8){
+            console.log('You pressed Delete')
+            var id = this.state.selectedControl.id;
+            this.setState({controls: this.state.controls.filter((_,i)=>i!=id)})
+        }
+    }
 
+    saveWireframe = () =>{
+        console.log("Wireframe saved!")
+        let fireStore = getFirestore();
+        fireStore.collection("wireFrames").doc(this.props.wireFrame.id).update({ controls: this.state.controls });
+        this.setState({saved: true})
+    }
+    renderSaved = ()=> {
+        if (this.state.saved){
+            return <Link to='/' className='col m4 waves-effect waves-light black-text red lighten-3 accent-2 hoverable rounded'>close</Link> 
+        }
+        else{
+            return <div>
+            <span className='col m4 waves-effect waves-light black-text red lighten-3 accent-2 hoverable rounded modal-trigger' href="#modal2">close</span> 
+            <Modal id="modal2" header="Closing Wireframe..." actions={
+                <div className="orange lighten-2">
+                    <Link to='/' className='red btn'>YES</Link> 
+                    <Button className="grey darken-1" modal="close">NO</Button>
+                </div>}>
+                <p><b>Are you sure you want to close this wireframe without saving?</b></p>
+            </Modal>
+            </div>
+        }
+    }
+    loadWireframe= ()=>{
+        this.setState({controls: this.props.wireFrame.controls })
+    }
 
     render() {
         const auth = this.props.auth;
         const wireFrame = this.props.wireFrame;
         const selectedControl = this.state.selectedControl;
+        const saved = this.state.saved;
+        const canvasStyle ={
+            container:{
+                height: 500,
+                width: 100,
+            }
+        };
 
         if (!auth.uid) {
             return <Redirect to="/" />;
@@ -176,16 +244,24 @@ class EditScreen extends Component {
         if (!this.changedTime) {
             this.changedTime = true;
             this.updateTime();
+            this.loadWireframe();
         }
 
         return (
             <div className='row'>
+                
                 <div className="controls grey lighten-2 col m2">
                     <div className='row'>
                         <i className="material-icons col m2">zoom_in</i>
                         <i className="material-icons col m2">zoom_out</i>
-                        <div className='col m4'>save</div>
-                        <div className='col m4'>close</div> 
+                        <div className='col m4 waves-effect waves-light grey lighten-3 accent-2 hoverable rounded modal-trigger' 
+                            href="#modal3" onClick={this.saveWireframe}>save</div>
+                        <Modal id="modal3" header="Wireframe SAVED" actions={
+                            <div className="green  lighten-2">
+                                <Button className="grey darken-1" modal="close">Close</Button>
+                            </div>}>
+                        </Modal>
+                        {this.renderSaved()}
                     </div> 
                     <div className="divider black"></div>
                     <div>
@@ -214,9 +290,9 @@ class EditScreen extends Component {
                     <div className="input-field col m8">
                         <input className="active" type="text" name="name" id="name" onChange={this.handleChange} value={wireFrame.name} />
                     </div>
-                    <div className="canvas" onClick={this.unselect}>
+                    <div  className="canvas" onClick={this.unselect}>
                         <ControlCard
-                            controls = {wireFrame.controls}
+                            controls = {this.state.controls}
                             select={this.select}
                         />
                     </div>
@@ -229,8 +305,8 @@ class EditScreen extends Component {
                          onChange={this.changeInput} value={selectedControl.text}/>
 
                     <div className="container font-size row">
-                        <h6 className="col m6">Font size:</h6>
-                        <input className="white col m6" type='number' value={selectedControl.text_size}
+                        <h6 className="col m7">Font size:</h6>
+                        <input className="white col m5" type='number' value={selectedControl.text_size}
                             onChange={this.changeTextSize}/>
                     </div>
                     <div className="color">
@@ -243,12 +319,12 @@ class EditScreen extends Component {
                     </div>
                     <div className="container border-thickness row">
                         <p></p>
-                        <h6 className="col m6">Border Thickness:</h6>
-                        <input className="white col m6" type="number" onChange={this.changeThickness} value={selectedControl.border_thickness}/>
+                        <h6 className="col m7">Border Thickness:</h6>
+                        <input className="white col m5" type="number" onChange={this.changeThickness} value={selectedControl.border_thickness}/>
                     </div>
                     <div className="container border-radius row">
-                        <h6 className="col m6">Border Radius:</h6>
-                        <input className="white col m6" type="number" onChange={this.changeRadius} value={selectedControl.border_radius}/>
+                        <h6 className="col m7">Border Radius:</h6>
+                        <input className="white col m5" type="number" onChange={this.changeRadius} value={selectedControl.border_radius}/>
                     </div>
                 </div>
             </div>
