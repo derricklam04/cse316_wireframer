@@ -11,12 +11,6 @@ import { Modal, Button } from 'react-materialize';
 
 
 class EditScreen extends Component {
-    constructor(props){
-        super(props);
-        //this.handleDeleteControl = this.handleDeleteControl.bind(this);
-    }
-    
-
     state = {
         name: '',
         controls: [],
@@ -43,8 +37,6 @@ class EditScreen extends Component {
         let fireStore = getFirestore();
         fireStore.collection('wireFrames').doc(this.props.wireFrame.id).update({ time: Date.now() })
     }
-
-
     handleChange = (e) => {
         const { target } = e;
         console.log(e)
@@ -56,13 +48,6 @@ class EditScreen extends Component {
         let dbitem = fireStore.collection('wireFrames').doc(this.props.wireFrame.id);
         dbitem.update({ [target.id]: target.value });
     }
-
-    updateFireStore = (e) =>{
-        const fireStore = getFirestore();
-        let dbitem = fireStore.collection('wireFrames').doc(this.props.wireFrame.id);
-        dbitem.update({ controls: [...this.props.wireFrame.controls, e]});
-    }
-
     addContainer = (e) => {
         let container = {
             controlType: 'container',
@@ -79,7 +64,6 @@ class EditScreen extends Component {
             border_radius: 1,
         }
         this.setState({controls: [...this.state.controls, container]});
-        //this.updateFireStore(container);
     }
     addPrompt = (e) => {
         let prompt = {
@@ -97,7 +81,6 @@ class EditScreen extends Component {
             border_radius: 0,
         }
         this.setState({controls: [...this.state.controls, prompt]});
-        //this.updateFireStore(prompt);
     }
     addButton = (e) => {
         let button = {
@@ -115,7 +98,6 @@ class EditScreen extends Component {
             border_radius: 1,
         }
         this.setState({controls: [...this.state.controls, button]});
-        //this.updateFireStore(button);
 
     }
     addTextfield = (e) => {
@@ -134,7 +116,6 @@ class EditScreen extends Component {
             border_radius: 1,
         }
         this.setState({controls: [...this.state.controls, textfield]});
-        //this.updateFireStore(textfield);
     }
     select = (control, e) => {
         e.stopPropagation()
@@ -216,48 +197,47 @@ class EditScreen extends Component {
         }
     }
 
-
-    updateFireStoreProperties = () =>{
-        let controls = JSON.parse(JSON.stringify(this.props.wireFrame.controls));
-        let pos = this.state.selectedControl.id;
-        controls[pos] = this.state.selectedControl;
-        console.log(controls);
-        let fireStore = getFirestore();
-        fireStore.collection("wireFrames").doc(this.props.wireFrame.id).update({ controls: controls });
-    }
     componentDidMount(){
-        document.addEventListener("keydown", this.handleDeleteControl, false);
-      }
-      componentWillUnmount(){
-        document.removeEventListener("keydown", this.handleDeleteControl, false);
-      }
-    handleDeleteControl = (event) => {
-        var pressed = false;
+        document.addEventListener("keydown", this.handleKeyPress, false);
+    }
+    componentWillUnmount(){
+        document.removeEventListener("keydown", this.handleKeyPress, false);
+    }
+    handleKeyPress = (event) => {
         if (event.keyCode === 27 || event.keyCode === 8 ){
             event.preventDefault();
             event.stopPropagation();
             console.log('You pressed Delete')
-            pressed = true;
+            
+                const unselected={
+                        controlType: 'unselected',
+                        height: 0,
+                        width: 0,
+                        x: 0,
+                        y: 0,
+                        text: '',
+                        text_size: 0,
+                        background: '',
+                        text_color: '',
+                        border_color: '',
+                        border_thickness: 0,
+                        border_radius: 0,
+                    
+                }
+                var id = this.state.selectedControl.id;
+                this.setState({controls: this.state.controls.filter((_,i)=>i!=id)})
+                this.setState({selectedControl: unselected})
+            
         }
-        if (pressed){
-            const unselected={
-                    controlType: 'unselected',
-                    height: 0,
-                    width: 0,
-                    x: 0,
-                    y: 0,
-                    text: '',
-                    text_size: 0,
-                    background: '',
-                    text_color: '',
-                    border_color: '',
-                    border_thickness: 0,
-                    border_radius: 0,
-                
+        else if ( event.keyCode === 68 && event.ctrlKey ){
+            event.preventDefault();
+            event.stopPropagation();
+            console.log('You pressed ctrl+D')
+
+            if (this.state.selectedControl.controlType !== 'unselected'){
+                const copy = JSON.parse(JSON.stringify(this.state.selectedControl))
+                this.setState({controls: [...this.state.controls, copy]});
             }
-            var id = this.state.selectedControl.id;
-            this.setState({controls: this.state.controls.filter((_,i)=>i!=id)})
-            this.setState({selectedControl: unselected})
         }
     }
 
@@ -292,7 +272,6 @@ class EditScreen extends Component {
         const auth = this.props.auth;
         const wireFrame = this.props.wireFrame;
         const selectedControl = this.state.selectedControl;
-        const saved = this.state.saved;
         const canvasStyle ={
             container:{
                 height: 500,
@@ -315,7 +294,7 @@ class EditScreen extends Component {
         return (
             <div className='row'>
                 
-                <div className="controls grey lighten-2 col m2">
+                <div className="controls grey lighten-2 col m2" onClick={this.unselect}>
                     <div className='row'>
                         <i className="material-icons col m2">zoom_in</i>
                         <i className="material-icons col m2">zoom_out</i>
@@ -350,12 +329,12 @@ class EditScreen extends Component {
                 </div>
 
 
-                <div className="white col m7 row">
+                <div className="white col m7 row" onClick={this.unselect}>
                     <h5 className="grey-text text-darken-3 col m4">Wireframe:</h5>
                     <div className="input-field col m8">
                         <input className="active" type="text" name="name" id="name" onChange={this.handleChange} value={wireFrame.name} />
                     </div>
-                    <div  className="canvas" onClick={this.unselect}>
+                    <div  className="canvas" >
                         <ControlCard
                             controls = {this.state.controls}
                             select={this.select}
