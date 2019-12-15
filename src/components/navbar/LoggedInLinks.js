@@ -6,8 +6,9 @@ import { firebaseConnect } from 'react-redux-firebase';
 import { logoutHandler } from '../../store/database/asynchHandler'
 
 class LoggedInLinks extends React.Component {
+
   handleLogout = () => {
-    const { firebase } = this.props;
+    const {firebase} = this.props;
     this.props.signOut(firebase);
   }
 

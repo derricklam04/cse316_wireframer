@@ -45,16 +45,12 @@ div.banner {
 
 
 .section{
-  padding-top: 70px;
+  padding-top: 82px;
 }
 .canvas{
   background-color: white;
-  margin-top: 70px;
   border: 1px solid grey;
-  width:100%;
-  height: 625px;
-  z-index: -1;
-  /* display: inline-block; */
+  display: inline-block;
 
 }
 

@@ -12,13 +12,13 @@ class Navbar extends React.Component {
 
   render() {
     const { auth, profile } = this.props;
-    const links = auth.uid ? <LoggedInLinks profile={profile} /> : <LoggedOutLinks />;
+    const loglink = auth.uid ? <LoggedInLinks profile={profile} /> : <LoggedOutLinks />;
 
     return (
-      <nav className="nav-wrapper grey darken-3">
+      <nav className=" grey darken-3 nav-wrapper">
         <div className="container">
           <Link to="/" className="left brand-logo">@WireFramer</Link>
-          {links}
+          {loglink}
         </div>
       </nav>
     );

@@ -29,6 +29,11 @@ class EditScreen extends Component {
             border_radius: 0,
         },
         saved: false,
+        canvasHeight: 575,
+        canvasWidth: 550,
+        tempCanvasHeight: 575,
+        tempCanvasWidth: 550,
+        disableSubmit: true,
     }
     changedTime = false;
 
@@ -204,7 +209,7 @@ class EditScreen extends Component {
         document.removeEventListener("keydown", this.handleKeyPress, false);
     }
     handleKeyPress = (event) => {
-        if (event.keyCode === 27 || event.keyCode === 8 ){
+        if (event.keyCode ===  46 || event.keyCode === 8 ){
             event.preventDefault();
             event.stopPropagation();
             console.log('You pressed Delete')
@@ -267,6 +272,24 @@ class EditScreen extends Component {
     loadWireframe= ()=>{
         this.setState({controls: this.props.wireFrame.controls })
     }
+    
+    changeHeight = (e) => {
+        if (e.target.value < 5000 || e.target.value>0){
+            this.setState({tempCanvasHeight: Number(e.target.value)});}
+            this.setState({disableSubmit: false});
+    }
+    changeWidth = (e) => {
+        if (e.target.value < 5000 || e.target.value>0){
+            this.setState({tempCanvasWidth: Number(e.target.value)});}
+            this.setState({disableSubmit: false});
+    }
+    
+    submitDimension =(e) =>{
+        this.setState({canvasHeight: this.state.tempCanvasHeight});
+        this.setState({canvasWidth: this.state.tempCanvasWidth});
+        this.setState({disableSubmit: true});
+
+    }
 
     render() {
         const auth = this.props.auth;
@@ -274,8 +297,8 @@ class EditScreen extends Component {
         const selectedControl = this.state.selectedControl;
         const canvasStyle ={
             container:{
-                height: 500,
-                width: 100,
+                height: this.state.canvasHeight,
+                width: this.state.canvasWidth,
             }
         };
 
@@ -294,7 +317,7 @@ class EditScreen extends Component {
         return (
             <div className='row'>
                 
-                <div className="controls grey lighten-2 col m2" onClick={this.unselect}>
+                <div className="controls grey lighten-2 col m2 border" onClick={this.unselect}>
                     <div className='row'>
                         <i className="material-icons col m2">zoom_in</i>
                         <i className="material-icons col m2">zoom_out</i>
@@ -330,20 +353,30 @@ class EditScreen extends Component {
 
 
                 <div className="white col m7 row" onClick={this.unselect}>
-                    <h5 className="grey-text text-darken-3 col m4">Wireframe:</h5>
-                    <div className="input-field col m8">
+                    <h5 className="grey-text text-darken-3 col m3">Wireframe:</h5>
+                    <div className="input-field col m9">
                         <input className="active" type="text" name="name" id="name" onChange={this.handleChange} value={wireFrame.name} />
                     </div>
-                    <div  className="canvas" >
+                    <div  className="canvas" style={canvasStyle.container} >
                         <ControlCard
                             controls = {this.state.controls}
                             select={this.select}
                         />
                     </div>
+                    <div className="row">
+                        <h5 className="col m2">Height-</h5>
+                        <input className="col m2"type="number" value={this.state.tempCanvasHeight} onChange={this.changeHeight}></input>
+                        <h5 className="col m2">Width-</h5>
+                        <input className="col m2" type="number" value={this.state.tempCanvasWidth}onChange={this.changeWidth}></input>
+                        <div className="col m1"></div>
+                        <Button className="col m2" onClick={this.submitDimension} disabled={this.state.disableSubmit}>Submit</Button>
+                        <div className="col m1"></div>
+
+                    </div>
                 </div>
 
 
-                <div className ="properties grey lighten-2 col m3">
+                <div className ="properties grey lighten-2 col m3 border">
                     <h5>Properties</h5>
                     <input className="active white textbox col s12" type="text" name="text" placeholder="Control Text"
                          onChange={this.changeInput} value={selectedControl.text}/>

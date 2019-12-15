@@ -36,7 +36,7 @@ class WireFrameCard extends React.Component {
                     <Modal id="modal1" header="Delete Wireframe?" actions={
                         <div className="orange lighten-2">
                             <Button className="red" tooltip="The list will not be retrievable." tooltipOptions={{ position: 'left' }}
-                                onClick={this.deleteWireFrame.bind(this, wireFrame.index)} modal="close">Yes</Button><span>  </span>
+                                onClick={this.deleteWireFrame.bind(this, wireFrame.id)} modal="close">Yes</Button><span>  </span>
                             <Button onClick={this.doNothing} className="grey darken-1" modal="close">No</Button>
                         </div>}>
                         <p><b>Are you sure you want to delete this wireframe?</b></p>

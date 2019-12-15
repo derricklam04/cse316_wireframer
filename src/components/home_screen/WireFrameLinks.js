@@ -10,7 +10,8 @@ class WireFrameLinks extends React.Component {
         console.log(wireFrames);
         return (
             <div className="todo-lists section">
-                {wireFrames && wireFrames.map(wireFrame => (
+                {wireFrames && wireFrames.map((wireFrame) => (
+
                     <Link to={'/wireFrame/' + wireFrame.id} key={wireFrame.id}>
                         <WireFrameCard 
                             wireFrame={wireFrame}
