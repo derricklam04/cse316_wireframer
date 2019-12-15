@@ -250,6 +250,10 @@ class EditScreen extends Component {
         console.log("Wireframe saved!")
         let fireStore = getFirestore();
         fireStore.collection("wireFrames").doc(this.props.wireFrame.id).update({ controls: this.state.controls });
+        fireStore.collection("wireFrames").doc(this.props.wireFrame.id).update({ wireframeHeight: this.state.canvasHeight });
+        fireStore.collection("wireFrames").doc(this.props.wireFrame.id).update({ wireframeWidth: this.state.canvasWidth });
+
+
         this.setState({saved: true})
     }
     renderSaved = ()=> {
@@ -271,6 +275,11 @@ class EditScreen extends Component {
     }
     loadWireframe= ()=>{
         this.setState({controls: this.props.wireFrame.controls })
+        this.setState({canvasWidth: this.props.wireFrame.wireframeWidth})
+        this.setState({canvasHeight: this.props.wireFrame.wireframeHeight})
+        this.setState({tempCanvasWidth: this.props.wireFrame.wireframeWidth})
+        this.setState({tempCanvasHeight: this.props.wireFrame.wireframeHeight})
+
     }
     
     changeHeight = (e) => {

@@ -12,6 +12,8 @@ class HomeScreen extends Component {
         let newWireFrameData = {
             name: 'Unnamed wireframe',
             controls: [],
+            wireframeHeight: 575,
+            wireframeWidth: 550,
             time: Date.now(),
         }
         const fireStore = getFirestore();
