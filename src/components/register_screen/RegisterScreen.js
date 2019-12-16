@@ -7,10 +7,20 @@ import { registerHandler } from '../../store/database/asynchHandler'
 
 class RegisterScreen extends Component {
   state = {
-    email: '',
-    password: '',
     firstName: '',
     lastName: '',
+    email: '',
+    password: '',
+    
+  }
+  handleSubmit = (e) => {
+    e.preventDefault();
+
+    const { props, state } = this;
+    const { firebase } = props;
+    const newUser = { ...state };
+
+    props.register(newUser, firebase);
   }
 
   handleChange = (e) => {
@@ -21,16 +31,7 @@ class RegisterScreen extends Component {
       [target.id]: target.value,
     }));
   }
-
-  handleSubmit = (e) => {
-    e.preventDefault();
-
-    const { props, state } = this;
-    const { firebase } = props;
-    const newUser = { ...state };
-
-    props.register(newUser, firebase);
-  }
+  
 
   render() {
     const { auth, authError } = this.props;

@@ -209,7 +209,7 @@ class EditScreen extends Component {
         document.removeEventListener("keydown", this.handleKeyPress, false);
     }
     handleKeyPress = (event) => {
-        if (event.keyCode ===  46 || event.keyCode === 8 ){
+        if (event.keyCode ===  46){
             event.preventDefault();
             event.stopPropagation();
             console.log('You pressed Delete')
@@ -283,21 +283,26 @@ class EditScreen extends Component {
     }
     
     changeHeight = (e) => {
-        if (e.target.value < 5000 || e.target.value>0){
-            this.setState({tempCanvasHeight: Number(e.target.value)});}
-            this.setState({disableSubmit: false});
+        if (e.target.value < 5000 && e.target.value>0){
+            this.setState({tempCanvasHeight: Number(e.target.value)});
+            this.setState({disableSubmit: false});}
+
     }
     changeWidth = (e) => {
-        if (e.target.value < 5000 || e.target.value>0){
-            this.setState({tempCanvasWidth: Number(e.target.value)});}
-            this.setState({disableSubmit: false});
+        if (e.target.value < 5000 && e.target.value>0){
+            this.setState({tempCanvasWidth: Number(e.target.value)});
+            this.setState({disableSubmit: false});}
+
     }
     
     submitDimension =(e) =>{
         this.setState({canvasHeight: this.state.tempCanvasHeight});
         this.setState({canvasWidth: this.state.tempCanvasWidth});
         this.setState({disableSubmit: true});
+    }
 
+    setPos =()=>{
+        console.log("Drag Stopped")
     }
 
     render() {
@@ -370,12 +375,13 @@ class EditScreen extends Component {
                         <ControlCard
                             controls = {this.state.controls}
                             select={this.select}
+                            setPos = {this.setPos}
                         />
                     </div>
                     <div className="row">
-                        <h5 className="col m2">Height-</h5>
+                        <h5 className="col m2">Height:</h5>
                         <input className="col m2"type="number" value={this.state.tempCanvasHeight} onChange={this.changeHeight}></input>
-                        <h5 className="col m2">Width-</h5>
+                        <h5 className="col m2">Width:</h5>
                         <input className="col m2" type="number" value={this.state.tempCanvasWidth}onChange={this.changeWidth}></input>
                         <div className="col m1"></div>
                         <Button className="col m2" onClick={this.submitDimension} disabled={this.state.disableSubmit}>Submit</Button>
